@@ -270,6 +270,9 @@ function BoardContent() {
         category_id: targetCategoryId,
         order: targetOrder,
       });
+
+      // 성공 시 서버에서 최신 데이터 리로드
+      await loadData();
     } catch (err) {
       // 실패 시 롤백
       setTasks(previousTasks);
