@@ -2,6 +2,7 @@
 
 JWT 토큰 생성/검증 및 비밀번호 해싱/검증 함수를 제공합니다.
 """
+import hashlib
 from datetime import datetime, timedelta, timezone
 from typing import Optional
 
@@ -18,6 +19,21 @@ from app.models import User
 # 비밀번호 해싱 컨텍스트 (bcrypt 사용)
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
+
+def _preprocess_password(password: str) -> str:
+    """비밀번호를 SHA256으로 전처리합니다.
+
+    bcrypt는 72바이트 제한이 있으므로, 긴 비밀번호를 처리하기 위해
+    SHA256으로 먼저 해시합니다.
+
+    Args:
+        password: 평문 비밀번호
+
+    Returns:
+        SHA256 해시된 비밀번호 (hex 형식)
+    """
+    return hashlib.sha256(password.encode('utf-8')).hexdigest()
+
 # OAuth2 Bearer 토큰 스킴
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/auth/login")
 
@@ -32,7 +48,9 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
     Returns:
         비밀번호 일치 여부
     """
-    return pwd_context.verify(plain_password, hashed_password)
+    # SHA256으로 전처리한 후 bcrypt 검증
+    preprocessed = _preprocess_password(plain_password)
+    return pwd_context.verify(preprocessed, hashed_password)
 
 
 def get_password_hash(password: str) -> str:
@@ -44,7 +62,9 @@ def get_password_hash(password: str) -> str:
     Returns:
         해시된 비밀번호
     """
-    return pwd_context.hash(password)
+    # SHA256으로 전처리한 후 bcrypt 해싱
+    preprocessed = _preprocess_password(password)
+    return pwd_context.hash(preprocessed)
 
 
 def create_access_token(data: dict, expires_delta: Optional[timedelta] = None) -> str:
