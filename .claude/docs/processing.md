@@ -4,7 +4,7 @@
 >
 > `[ ]` 미완료 / `[x]` 완료
 
-마지막 업데이트: 2026-02-03 (Phase 1 완료)
+마지막 업데이트: 2026-02-03 (Phase 2 완료)
 
 ---
 
@@ -58,44 +58,44 @@
 ## Phase 2: Kanban 보드 핵심 기능
 
 ### 카테고리 API
-- [ ] GET /api/categories - 카테고리 목록
-- [ ] POST /api/categories - 카테고리 생성
-- [ ] PUT /api/categories/{id} - 카테고리 수정
-- [ ] DELETE /api/categories/{id} - 카테고리 삭제
-- [ ] PUT /api/categories/reorder - 카테고리 순서 변경
-- [ ] Pydantic 스키마 (CategoryCreate, CategoryUpdate, CategoryResponse)
+- [x] GET /api/categories - 카테고리 목록
+- [x] POST /api/categories - 카테고리 생성
+- [x] PUT /api/categories/{id} - 카테고리 수정
+- [x] DELETE /api/categories/{id} - 카테고리 삭제
+- [x] PUT /api/categories/reorder - 카테고리 순서 변경
+- [x] Pydantic 스키마 (CategoryCreate, CategoryUpdate, CategoryResponse)
 
 ### 일감 API
-- [ ] GET /api/tasks - 일감 목록 (필터링 지원)
-  - [ ] 카테고리별 필터
-  - [ ] 담당자별 필터
-  - [ ] 우선순위별 필터
-- [ ] POST /api/tasks - 일감 생성
-- [ ] GET /api/tasks/{id} - 일감 상세
-- [ ] PUT /api/tasks/{id} - 일감 수정
-- [ ] DELETE /api/tasks/{id} - 일감 삭제
-- [ ] PUT /api/tasks/{id}/move - 일감 카테고리 이동
-- [ ] Pydantic 스키마 (TaskCreate, TaskUpdate, TaskResponse)
+- [x] GET /api/tasks - 일감 목록 (필터링 지원)
+  - [x] 카테고리별 필터
+  - [x] 담당자별 필터
+  - [x] 우선순위별 필터
+- [x] POST /api/tasks - 일감 생성
+- [x] GET /api/tasks/{id} - 일감 상세
+- [x] PUT /api/tasks/{id} - 일감 수정
+- [x] DELETE /api/tasks/{id} - 일감 삭제
+- [x] PUT /api/tasks/{id}/move - 일감 카테고리 이동
+- [x] Pydantic 스키마 (TaskCreate, TaskUpdate, TaskResponse)
 
 ### Kanban 보드 UI
-- [ ] / 또는 /board 페이지 생성
-- [ ] 카테고리 컬럼 레이아웃
-  - [ ] ToDo, Processing, Issue, Done 컬럼 표시
-  - [ ] 카테고리별 색상 적용
-- [ ] 일감 카드 컴포넌트
-  - [ ] 제목, 설명 표시
-  - [ ] 담당자, 마감일 표시
-  - [ ] 우선순위 표시
-- [ ] 일감 생성 버튼 및 모달
-- [ ] 일감 상세 보기 모달
-- [ ] 일감 수정/삭제 기능
+- [x] / 또는 /board 페이지 생성
+- [x] 카테고리 컬럼 레이아웃
+  - [x] ToDo, Processing, Issue, Done 컬럼 표시
+  - [x] 카테고리별 색상 적용
+- [x] 일감 카드 컴포넌트
+  - [x] 제목, 설명 표시
+  - [x] 담당자, 마감일 표시
+  - [x] 우선순위 표시
+- [x] 일감 생성 버튼 및 모달
+- [x] 일감 상세 보기 모달
+- [x] 일감 수정/삭제 기능
 
 ### 드래그 앤 드롭
-- [ ] react-beautiful-dnd 또는 dnd-kit 설치
-- [ ] 드래그 앤 드롭 이벤트 핸들러
-- [ ] 카테고리 간 이동 API 연동
-- [ ] 같은 카테고리 내 순서 변경
-- [ ] 드래그 중 시각적 피드백
+- [x] react-beautiful-dnd 또는 dnd-kit 설치
+- [x] 드래그 앤 드롭 이벤트 핸들러
+- [x] 카테고리 간 이동 API 연동
+- [x] 같은 카테고리 내 순서 변경
+- [x] 드래그 중 시각적 피드백
 
 ---
 
@@ -210,7 +210,7 @@
 
 ### 현재 작업 중
 <!-- 현재 진행 중인 작업을 여기에 기록 -->
-- Phase 1 완료
+- Phase 2 완료
 
 ### 발견된 이슈
 <!-- 개발 중 발견된 이슈나 TODO를 여기에 기록 -->
@@ -218,6 +218,7 @@
 
 ### 다음 우선순위
 <!-- 다음에 작업할 항목을 여기에 기록 -->
-1. Phase 2: Kanban 보드 핵심 기능
-   - 카테고리 API 및 일감 API 구현
-   - Kanban 보드 UI 및 드래그 앤 드롭 기능
+1. Phase 3: 권한 관리
+   - 역할 기반 권한 미들웨어
+   - 사용자 관리 페이지 (Admin)
+   - 권한별 UI 제어

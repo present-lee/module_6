@@ -14,10 +14,10 @@ export default function LoginPage() {
   const { login, isAuthenticated, isLoading } = useAuth();
   const router = useRouter();
 
-  // 이미 로그인된 경우 메인 페이지로 리다이렉트
+  // 이미 로그인된 경우 보드 페이지로 리다이렉트
   useEffect(() => {
     if (!isLoading && isAuthenticated) {
-      router.push('/');
+      router.push('/board');
     }
   }, [isAuthenticated, isLoading, router]);
 
@@ -40,7 +40,7 @@ export default function LoginPage() {
 
     try {
       await login(email, password);
-      router.push('/');
+      router.push('/board');
     } catch (err) {
       if (err instanceof Error) {
         setError(err.message);
