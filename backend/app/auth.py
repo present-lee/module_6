@@ -117,6 +117,8 @@ async def get_current_user(
     Raises:
         HTTPException: 토큰이 유효하지 않거나 사용자를 찾을 수 없는 경우
     """
+    print(f"[AUTH] get_current_user called with token: {token[:20]}...")
+
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Could not validate credentials",
@@ -124,15 +126,25 @@ async def get_current_user(
     )
 
     payload = decode_access_token(token)
+    print(f"[AUTH] Decoded payload: {payload}")
+
     if payload is None:
+        print("[AUTH] ERROR: Payload is None - token decode failed")
         raise credentials_exception
 
     email: str = payload.get("sub")
+    print(f"[AUTH] Extracted email: {email}")
+
     if email is None:
+        print("[AUTH] ERROR: Email is None in payload")
         raise credentials_exception
 
     user = get_user_by_email(db, email=email)
+    print(f"[AUTH] Found user: {user.username if user else 'None'}")
+
     if user is None:
+        print("[AUTH] ERROR: User not found in database")
         raise credentials_exception
 
+    print(f"[AUTH] SUCCESS: User authenticated - {user.username}")
     return user

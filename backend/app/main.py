@@ -57,10 +57,12 @@ app = FastAPI(title="Module 6 API", version="1.0.0", lifespan=lifespan)
 # CORS 설정
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],
+    allow_origins=["http://localhost:3000", "http://localhost:8000"],
     allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
+    allow_headers=["Content-Type", "Authorization", "Accept", "Origin", "User-Agent"],
+    expose_headers=["Content-Type", "Authorization"],
+    max_age=3600,
 )
 
 # 라우터 등록

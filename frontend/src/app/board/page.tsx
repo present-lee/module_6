@@ -75,7 +75,7 @@ function BoardContent() {
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
 
-  const { user, logout } = useAuth();
+  const { user, logout, token, isLoading: authLoading } = useAuth();
   const router = useRouter();
 
   // 드래그 센서 설정
@@ -92,6 +92,14 @@ function BoardContent() {
 
   // 데이터 로드
   const loadData = useCallback(async () => {
+    // 토큰이 없으면 로드하지 않음
+    if (!token) {
+      console.log('[Board] No token available, skipping data load');
+      return;
+    }
+
+    console.log('[Board] Loading data with token:', token.substring(0, 20) + '...');
+
     try {
       setError(null);
       const [categoriesData, tasksData] = await Promise.all([
@@ -100,16 +108,29 @@ function BoardContent() {
       ]);
       setCategories(categoriesData.sort((a, b) => a.order - b.order));
       setTasks(tasksData);
+      console.log('[Board] Data loaded successfully');
     } catch (err) {
+      console.error('[Board] Data load error:', err);
       setError(err instanceof Error ? err.message : '데이터를 불러오는데 실패했습니다.');
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [token]);
 
   useEffect(() => {
-    loadData();
-  }, [loadData]);
+    // AuthContext가 로딩 중이면 대기
+    if (authLoading) {
+      console.log('[Board] AuthContext is loading, waiting...');
+      return;
+    }
+
+    // 토큰이 있을 때만 데이터 로드
+    if (token) {
+      loadData();
+    } else {
+      setIsLoading(false);
+    }
+  }, [token, authLoading, loadData]);
 
   // 카테고리별 일감 필터링 (메모이제이션)
   const tasksByCategory = useMemo(() => {

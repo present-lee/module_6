@@ -58,16 +58,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   // 로그인 함수
   const login = useCallback(async (email: string, password: string) => {
+    console.log('[Auth] Starting login...');
     const response = await loginUser({ email, password });
     const { access_token } = response;
+    console.log('[Auth] Received token:', access_token ? `${access_token.substring(0, 20)}...` : 'null');
 
     // 토큰 저장
     setStoredToken(access_token);
     setToken(access_token);
+    console.log('[Auth] Token stored in localStorage');
 
     // 사용자 정보 가져오기
     const userData = await getCurrentUser(access_token);
     setUser(userData);
+    console.log('[Auth] Login successful, user:', userData.username);
   }, []);
 
   // 회원가입 함수

@@ -40,6 +40,8 @@ export default function LoginPage() {
 
     try {
       await login(email, password);
+      // 로그인 성공 후 상태가 업데이트될 시간을 주기 위해 약간의 딜레이
+      await new Promise(resolve => setTimeout(resolve, 100));
       router.push('/board');
     } catch (err) {
       if (err instanceof Error) {
