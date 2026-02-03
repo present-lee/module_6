@@ -13,19 +13,13 @@ from app.schemas.task import (
     TaskResponse,
     TaskMove,
 )
-from app.auth import get_current_user
+from app.auth import (
+    get_current_user,
+    get_current_admin_or_member,
+    require_admin_or_member,
+)
 
 router = APIRouter(prefix="/api/tasks", tags=["tasks"])
-
-
-def require_admin_or_member(current_user: User) -> User:
-    """Admin 또는 Member 권한 확인"""
-    if current_user.role not in [UserRole.admin, UserRole.member]:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Admin 또는 Member 권한이 필요합니다.",
-        )
-    return current_user
 
 
 def get_task_with_relations(db: Session, task_id: int) -> Task | None:

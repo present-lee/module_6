@@ -4,7 +4,7 @@
 >
 > `[ ]` 미완료 / `[x]` 완료
 
-마지막 업데이트: 2026-02-03 (Phase 2 완료)
+마지막 업데이트: 2026-02-03 (Phase 3 완료)
 
 ---
 
@@ -102,27 +102,36 @@
 ## Phase 3: 권한 관리
 
 ### 역할 기반 권한 미들웨어
-- [ ] 권한 검증 데코레이터/미들웨어 구현
-- [ ] Admin 전용 엔드포인트 보호
-- [ ] Member/Viewer 권한 검증
+- [x] 권한 검증 데코레이터/미들웨어 구현
+  - [x] get_current_admin_user 의존성 함수
+  - [x] get_current_admin_or_member 의존성 함수
+  - [x] require_admin, require_admin_or_member 유틸리티 함수
+- [x] Admin 전용 엔드포인트 보호
+- [x] Member/Viewer 권한 검증
 
 ### 사용자 관리 API (Admin)
-- [ ] GET /api/users - 사용자 목록
-- [ ] GET /api/users/{id} - 사용자 상세
-- [ ] PUT /api/users/{id} - 사용자 수정 (역할 변경)
-- [ ] DELETE /api/users/{id} - 사용자 삭제
+- [x] GET /api/users - 사용자 목록
+- [x] GET /api/users/{id} - 사용자 상세
+- [x] PUT /api/users/{id}/role - 사용자 역할 변경
+- [x] DELETE /api/users/{id} - 사용자 삭제
+- [x] 자기 자신 역할 변경/삭제 방지
 
 ### 사용자 관리 페이지
-- [ ] /settings/users 페이지 (Admin only)
-  - [ ] 사용자 목록 테이블
-  - [ ] 역할 변경 기능
-  - [ ] 사용자 삭제 기능
+- [x] /admin/users 페이지 (Admin only)
+  - [x] 사용자 목록 테이블
+  - [x] 역할 변경 기능 (admin/member/viewer)
+  - [x] 사용자 삭제 기능
+  - [x] 역할별 권한 설명 UI
 
 ### 권한별 UI 제어
-- [ ] Admin: 모든 기능 접근
-- [ ] Member: 일감 생성/수정만 가능
-- [ ] Viewer: 읽기 전용
-- [ ] 권한에 따른 버튼/메뉴 표시/숨김
+- [x] Admin: 모든 기능 접근 + 사용자 관리
+- [x] Member: 일감 생성/수정, 본인 생성 일감 삭제
+- [x] Viewer: 읽기 전용 (생성/수정/삭제/드래그 불가)
+- [x] 권한에 따른 버튼/메뉴 표시/숨김
+  - [x] 헤더: 역할 배지, 사용자 관리 버튼 (Admin)
+  - [x] 보드: 일감 추가 버튼 (Admin/Member만)
+  - [x] 일감 상세: 수정/삭제 버튼 (권한별)
+  - [x] 드래그 앤 드롭 (Admin/Member만)
 
 ---
 
@@ -210,15 +219,17 @@
 
 ### 현재 작업 중
 <!-- 현재 진행 중인 작업을 여기에 기록 -->
-- Phase 2 완료
+- Phase 3 완료
 
-### 발견된 이슈
+### 발견된 이슈 및 수정 사항
 <!-- 개발 중 발견된 이슈나 TODO를 여기에 기록 -->
-- 없음
+- [수정] Task 생성 시 422 에러: 날짜 형식 불일치 (YYYY-MM-DD → ISO 8601)
+- [수정] TaskPriority enum에 'urgent' 누락 → 추가 완료
+- [수정] Frontend User 타입에 'role' 필드 누락 → 추가 완료
 
 ### 다음 우선순위
 <!-- 다음에 작업할 항목을 여기에 기록 -->
-1. Phase 3: 권한 관리
-   - 역할 기반 권한 미들웨어
-   - 사용자 관리 페이지 (Admin)
-   - 권한별 UI 제어
+1. Phase 4: 간트차트
+   - 간트차트용 API
+   - 간트차트 UI (react-gantt-chart 또는 dhtmlx-gantt)
+   - 필터링 기능

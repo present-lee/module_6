@@ -11,6 +11,7 @@ class TaskPriority(str, enum.Enum):
     low = "low"
     medium = "medium"
     high = "high"
+    urgent = "urgent"
 
 
 class Task(Base):

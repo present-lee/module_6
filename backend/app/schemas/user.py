@@ -39,3 +39,8 @@ class Token(BaseModel):
 class TokenData(BaseModel):
     """토큰 내부 데이터 스키마"""
     email: str | None = None
+
+
+class UserRoleUpdate(BaseModel):
+    """사용자 역할 변경 요청 스키마 (Admin 전용)"""
+    role: UserRole = Field(..., description="변경할 역할 (admin, member, viewer)")

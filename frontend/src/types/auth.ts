@@ -1,8 +1,12 @@
+// 사용자 역할 타입
+export type UserRole = 'admin' | 'member' | 'viewer';
+
 // 사용자 정보 타입
 export interface User {
   id: number;
   username: string;
   email: string;
+  role: UserRole;
   created_at: string;
 }
 
@@ -36,6 +40,10 @@ export interface AuthContextType {
   token: string | null;
   isLoading: boolean;
   isAuthenticated: boolean;
+  isAdmin: boolean;
+  isMember: boolean;
+  isViewer: boolean;
+  canEdit: boolean;  // admin 또는 member
   login: (email: string, password: string) => Promise<void>;
   register: (username: string, email: string, password: string) => Promise<void>;
   logout: () => void;

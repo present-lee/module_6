@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { Category, Task, Priority, TaskUpdateRequest, PRIORITY_CONFIG } from '@/types/kanban';
 import { User } from '@/types/auth';
 import { updateTask, deleteTask, moveTask, getUsers } from '@/lib/api';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface TaskDetailModalProps {
   isOpen: boolean;
@@ -53,6 +54,8 @@ export default function TaskDetailModal({
   const [error, setError] = useState<string | null>(null);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
+  const { canEdit, isAdmin, user: currentUser } = useAuth();
+
   // 사용자 목록 로드
   useEffect(() => {
     if (isOpen) {
@@ -96,8 +99,8 @@ export default function TaskDetailModal({
         title: title.trim(),
         description: description.trim() || null,
         assigned_to: assignedTo || null,
-        start_date: startDate || null,
-        due_date: dueDate || null,
+        start_date: startDate ? `${startDate}T00:00:00` : null,
+        due_date: dueDate ? `${dueDate}T23:59:59` : null,
         priority,
       };
 
@@ -394,45 +397,50 @@ export default function TaskDetailModal({
                 <p>수정: {formatDateDisplay(task.updated_at)}</p>
               </div>
 
-              {/* 버튼 */}
-              <div className="flex gap-3 pt-4">
-                {showDeleteConfirm ? (
-                  <>
-                    <button
-                      type="button"
-                      onClick={() => setShowDeleteConfirm(false)}
-                      className="flex-1 py-2 px-4 border border-gray-300 rounded-lg text-gray-700 font-medium hover:bg-gray-50 transition-colors"
-                    >
-                      취소
-                    </button>
-                    <button
-                      type="button"
-                      onClick={handleDelete}
-                      disabled={isDeleting}
-                      className="flex-1 py-2 px-4 bg-red-600 text-white rounded-lg font-medium hover:bg-red-700 transition-colors disabled:opacity-50"
-                    >
-                      {isDeleting ? '삭제 중...' : '삭제 확인'}
-                    </button>
-                  </>
-                ) : (
-                  <>
-                    <button
-                      type="button"
-                      onClick={() => setShowDeleteConfirm(true)}
-                      className="py-2 px-4 border border-red-300 text-red-600 rounded-lg font-medium hover:bg-red-50 transition-colors"
-                    >
-                      삭제
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setIsEditMode(true)}
-                      className="flex-1 py-2 px-4 bg-indigo-600 text-white rounded-lg font-medium hover:bg-indigo-700 transition-colors"
-                    >
-                      수정
-                    </button>
-                  </>
-                )}
-              </div>
+              {/* 버튼 (권한에 따라 표시) */}
+              {canEdit && (
+                <div className="flex gap-3 pt-4">
+                  {showDeleteConfirm ? (
+                    <>
+                      <button
+                        type="button"
+                        onClick={() => setShowDeleteConfirm(false)}
+                        className="flex-1 py-2 px-4 border border-gray-300 rounded-lg text-gray-700 font-medium hover:bg-gray-50 transition-colors"
+                      >
+                        취소
+                      </button>
+                      <button
+                        type="button"
+                        onClick={handleDelete}
+                        disabled={isDeleting}
+                        className="flex-1 py-2 px-4 bg-red-600 text-white rounded-lg font-medium hover:bg-red-700 transition-colors disabled:opacity-50"
+                      >
+                        {isDeleting ? '삭제 중...' : '삭제 확인'}
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      {/* 삭제: Admin/Member 또는 본인만 */}
+                      {(isAdmin || task.created_by === currentUser?.id) && (
+                        <button
+                          type="button"
+                          onClick={() => setShowDeleteConfirm(true)}
+                          className="py-2 px-4 border border-red-300 text-red-600 rounded-lg font-medium hover:bg-red-50 transition-colors"
+                        >
+                          삭제
+                        </button>
+                      )}
+                      <button
+                        type="button"
+                        onClick={() => setIsEditMode(true)}
+                        className="flex-1 py-2 px-4 bg-indigo-600 text-white rounded-lg font-medium hover:bg-indigo-700 transition-colors"
+                      >
+                        수정
+                      </button>
+                    </>
+                  )}
+                </div>
+              )}
             </div>
           )}
         </div>

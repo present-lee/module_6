@@ -33,6 +33,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // 인증 상태 확인
   const isAuthenticated = !!user && !!token;
 
+  // 역할 기반 권한 확인
+  const isAdmin = user?.role === 'admin';
+  const isMember = user?.role === 'member';
+  const isViewer = user?.role === 'viewer';
+  const canEdit = isAdmin || isMember;  // admin 또는 member는 편집 가능
+
   // 초기 로드 시 토큰 확인 및 사용자 정보 가져오기
   useEffect(() => {
     const initAuth = async () => {
@@ -93,6 +99,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     token,
     isLoading,
     isAuthenticated,
+    isAdmin,
+    isMember,
+    isViewer,
+    canEdit,
     login,
     register,
     logout,

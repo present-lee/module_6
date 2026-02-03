@@ -148,3 +148,107 @@ async def get_current_user(
 
     print(f"[AUTH] SUCCESS: User authenticated - {user.username}")
     return user
+
+
+# ============================================================
+# 역할 기반 권한 검증 의존성 함수
+# ============================================================
+
+async def get_current_admin_user(
+    current_user: User = Depends(get_current_user),
+) -> User:
+    """현재 사용자가 Admin인지 확인합니다.
+
+    FastAPI 의존성 함수로 사용됩니다.
+
+    Args:
+        current_user: 현재 로그인한 사용자
+
+    Returns:
+        Admin 권한이 있는 User 객체
+
+    Raises:
+        HTTPException: Admin 권한이 없는 경우 403 Forbidden
+    """
+    from app.models.user import UserRole
+
+    if current_user.role != UserRole.admin:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Admin 권한이 필요합니다.",
+        )
+    return current_user
+
+
+async def get_current_admin_or_member(
+    current_user: User = Depends(get_current_user),
+) -> User:
+    """현재 사용자가 Admin 또는 Member인지 확인합니다.
+
+    FastAPI 의존성 함수로 사용됩니다.
+
+    Args:
+        current_user: 현재 로그인한 사용자
+
+    Returns:
+        Admin 또는 Member 권한이 있는 User 객체
+
+    Raises:
+        HTTPException: Admin/Member 권한이 없는 경우 403 Forbidden
+    """
+    from app.models.user import UserRole
+
+    if current_user.role not in [UserRole.admin, UserRole.member]:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Admin 또는 Member 권한이 필요합니다.",
+        )
+    return current_user
+
+
+def require_admin(current_user: User) -> User:
+    """Admin 권한 확인 유틸리티 함수.
+
+    엔드포인트 내부에서 호출하여 권한을 검증합니다.
+
+    Args:
+        current_user: 현재 로그인한 사용자
+
+    Returns:
+        Admin 권한이 있는 User 객체
+
+    Raises:
+        HTTPException: Admin 권한이 없는 경우 403 Forbidden
+    """
+    from app.models.user import UserRole
+
+    if current_user.role != UserRole.admin:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Admin 권한이 필요합니다.",
+        )
+    return current_user
+
+
+def require_admin_or_member(current_user: User) -> User:
+    """Admin 또는 Member 권한 확인 유틸리티 함수.
+
+    엔드포인트 내부에서 호출하여 권한을 검증합니다.
+
+    Args:
+        current_user: 현재 로그인한 사용자
+
+    Returns:
+        Admin 또는 Member 권한이 있는 User 객체
+
+    Raises:
+        HTTPException: Admin/Member 권한이 없는 경우 403 Forbidden
+    """
+    from app.models.user import UserRole
+
+    if current_user.role not in [UserRole.admin, UserRole.member]:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Admin 또는 Member 권한이 필요합니다.",
+        )
+    return current_user

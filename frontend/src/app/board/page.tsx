@@ -75,7 +75,7 @@ function BoardContent() {
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
 
-  const { user, logout, token, isLoading: authLoading } = useAuth();
+  const { user, logout, token, isLoading: authLoading, isAdmin, canEdit } = useAuth();
   const router = useRouter();
 
   // 드래그 센서 설정
@@ -153,8 +153,10 @@ function BoardContent() {
     return map;
   }, [tasksByCategory]);
 
-  // 드래그 시작
+  // 드래그 시작 (Admin/Member만 가능)
   const handleDragStart = (event: DragStartEvent) => {
+    if (!canEdit) return;  // viewer는 드래그 불가
+
     const { active } = event;
     const activeData = active.data.current;
 
@@ -325,13 +327,36 @@ function BoardContent() {
         <div className="max-w-full mx-auto px-4 py-3 flex items-center justify-between">
           <h1 className="text-xl font-bold text-gray-800">Kanban Board</h1>
           <div className="flex items-center gap-4">
+            {/* 역할 배지 */}
+            <span className={`px-2 py-1 rounded text-xs font-medium ${
+              user?.role === 'admin' ? 'bg-purple-100 text-purple-700' :
+              user?.role === 'member' ? 'bg-blue-100 text-blue-700' :
+              'bg-gray-100 text-gray-700'
+            }`}>
+              {user?.role === 'admin' ? '관리자' : user?.role === 'member' ? '멤버' : '뷰어'}
+            </span>
             <span className="text-sm text-gray-600">{user?.username}</span>
-            <button
-              onClick={() => handleOpenCreateModal()}
-              className="px-4 py-2 bg-indigo-600 text-white text-sm rounded-lg hover:bg-indigo-700 transition-colors"
-            >
-              + 새 일감
-            </button>
+
+            {/* Admin: 사용자 관리 버튼 */}
+            {isAdmin && (
+              <button
+                onClick={() => router.push('/admin/users')}
+                className="px-4 py-2 text-purple-600 text-sm border border-purple-300 rounded-lg hover:bg-purple-50 transition-colors"
+              >
+                사용자 관리
+              </button>
+            )}
+
+            {/* Admin/Member: 새 일감 버튼 */}
+            {canEdit && (
+              <button
+                onClick={() => handleOpenCreateModal()}
+                className="px-4 py-2 bg-indigo-600 text-white text-sm rounded-lg hover:bg-indigo-700 transition-colors"
+              >
+                + 새 일감
+              </button>
+            )}
+
             <button
               onClick={handleLogout}
               className="px-4 py-2 text-gray-600 text-sm hover:text-gray-800 transition-colors"
@@ -389,26 +414,28 @@ function BoardContent() {
                         {categoryTasks.length}
                       </span>
                     </h2>
-                    <button
-                      onClick={() => handleOpenCreateModal(category.id)}
-                      className="text-white hover:bg-white hover:bg-opacity-20 rounded p-1 transition-colors"
-                      title="이 카테고리에 일감 추가"
-                    >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="h-5 w-5"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
+                    {canEdit && (
+                      <button
+                        onClick={() => handleOpenCreateModal(category.id)}
+                        className="text-white hover:bg-white hover:bg-opacity-20 rounded p-1 transition-colors"
+                        title="이 카테고리에 일감 추가"
                       >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M12 4v16m8-8H4"
-                        />
-                      </svg>
-                    </button>
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="h-5 w-5"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M12 4v16m8-8H4"
+                          />
+                        </svg>
+                      </button>
+                    )}
                   </div>
 
                   {/* 일감 목록 (드롭 가능 영역) */}
@@ -437,29 +464,31 @@ function BoardContent() {
                     </DroppableCategory>
                   </SortableContext>
 
-                  {/* 하단 추가 버튼 */}
-                  <div className="p-2">
-                    <button
-                      onClick={() => handleOpenCreateModal(category.id)}
-                      className="w-full py-2 text-gray-500 text-sm hover:bg-gray-300 rounded transition-colors flex items-center justify-center gap-1"
-                    >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="h-4 w-4"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
+                  {/* 하단 추가 버튼 (Admin/Member만) */}
+                  {canEdit && (
+                    <div className="p-2">
+                      <button
+                        onClick={() => handleOpenCreateModal(category.id)}
+                        className="w-full py-2 text-gray-500 text-sm hover:bg-gray-300 rounded transition-colors flex items-center justify-center gap-1"
                       >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M12 4v16m8-8H4"
-                        />
-                      </svg>
-                      일감 추가
-                    </button>
-                  </div>
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="h-4 w-4"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M12 4v16m8-8H4"
+                          />
+                        </svg>
+                        일감 추가
+                      </button>
+                    </div>
+                  )}
                 </div>
               );
             })}
