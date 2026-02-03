@@ -54,11 +54,16 @@ def register(user_data: UserCreate, db: Session = Depends(get_db)):
 
     # 비밀번호 해싱 및 사용자 생성
     hashed_password = get_password_hash(user_data.password)
+
+    # 첫 번째 사용자는 자동으로 admin으로 설정
+    user_count = db.query(User).count()
+    default_role = UserRole.admin if user_count == 0 else UserRole.member
+
     db_user = User(
         username=user_data.username,
         email=user_data.email,
         hashed_password=hashed_password,
-        role=UserRole.member  # 기본 역할
+        role=default_role
     )
 
     db.add(db_user)
