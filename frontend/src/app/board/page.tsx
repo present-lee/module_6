@@ -153,10 +153,8 @@ function BoardContent() {
     return map;
   }, [tasksByCategory]);
 
-  // 드래그 시작 (Admin/Member만 가능)
+  // 드래그 시작
   const handleDragStart = (event: DragStartEvent) => {
-    if (!canEdit) return;  // viewer는 드래그 불가
-
     const { active } = event;
     const activeData = active.data.current;
 
@@ -392,7 +390,7 @@ function BoardContent() {
           onDragEnd={handleDragEnd}
           onDragCancel={handleDragCancel}
         >
-          <div className="flex gap-4 min-h-[calc(100vh-120px)]">
+          <div className="flex gap-4 min-h-[calc(100vh-120px)] max-w-[1600px] mx-auto justify-center">
             {categories.map((category) => {
               const categoryTasks = tasksByCategory.get(category.id) || [];
               const taskIds = taskIdsByCategory.get(category.id) || [];
@@ -458,6 +456,7 @@ function BoardContent() {
                             task={task}
                             onClick={() => handleOpenDetailModal(task)}
                             isDragging={activeTask?.id === task.id}
+                            disabled={!canEdit}
                           />
                         ))
                       )}

@@ -8,6 +8,7 @@ interface TaskCardProps {
   task: Task;
   onClick: () => void;
   isDragging?: boolean;
+  disabled?: boolean;  // 드래그 비활성화 (viewer용)
 }
 
 // 마감일이 임박했는지 확인 (3일 이내)
@@ -34,7 +35,7 @@ function formatDate(dateString: string): string {
   return `${month}/${day}`;
 }
 
-export default function TaskCard({ task, onClick, isDragging: externalIsDragging }: TaskCardProps) {
+export default function TaskCard({ task, onClick, isDragging: externalIsDragging, disabled = false }: TaskCardProps) {
   const {
     attributes,
     listeners,
@@ -48,6 +49,7 @@ export default function TaskCard({ task, onClick, isDragging: externalIsDragging
       type: 'task',
       task,
     },
+    disabled,  // viewer는 드래그 불가
   });
 
   const isDragging = externalIsDragging || sortableIsDragging;
@@ -73,11 +75,13 @@ export default function TaskCard({ task, onClick, isDragging: externalIsDragging
     <div
       ref={setNodeRef}
       style={style}
-      className={`bg-white rounded-lg shadow-sm border border-gray-200 p-3 cursor-grab hover:shadow-md hover:border-gray-300 transition-all ${
+      className={`bg-white rounded-lg shadow-sm border border-gray-200 p-3 ${
+        disabled ? 'cursor-pointer' : 'cursor-grab'
+      } hover:shadow-md hover:border-gray-300 transition-all ${
         isDragging ? 'opacity-50 shadow-lg ring-2 ring-indigo-500 rotate-2' : ''
       }`}
       {...attributes}
-      {...listeners}
+      {...(!disabled && listeners)}  // disabled가 아닐 때만 listeners 적용
       onClick={(e) => {
         // 드래그가 아닌 경우에만 클릭 이벤트 처리
         if (!isDragging) {
@@ -85,24 +89,26 @@ export default function TaskCard({ task, onClick, isDragging: externalIsDragging
         }
       }}
     >
-      {/* 드래그 핸들 아이콘 */}
+      {/* 드래그 핸들 아이콘 (편집 가능한 경우만 표시) */}
       <div className="flex items-start gap-2">
-        <div className="text-gray-400 hover:text-gray-600 pt-1 cursor-grab">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-4 w-4"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M4 8h16M4 16h16"
-            />
-          </svg>
-        </div>
+        {!disabled && (
+          <div className="text-gray-400 hover:text-gray-600 pt-1 cursor-grab">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-4 w-4"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M4 8h16M4 16h16"
+              />
+            </svg>
+          </div>
+        )}
         <div className="flex-1 min-w-0">
           {/* 제목 */}
           <h4 className="font-medium text-gray-800 mb-2 line-clamp-2">
