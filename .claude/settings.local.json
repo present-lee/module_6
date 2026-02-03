@@ -1,0 +1,20 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(gh:*)",
+      "Bash(git:*)",
+      "Bash(.venvScriptspython -c \"from app.models import User, UserRole, Category, Task, TaskPriority; print\\(''All models imported successfully''\\)\")",
+      "Bash(powershell -Command \"cd ''C:\\\\Users\\\\student\\\\Documents\\\\vibecoding\\\\module_6\\\\backend''; & ''.venv\\\\Scripts\\\\python.exe'' -c ''from app.models import User, UserRole, Category, Task, TaskPriority; print\\(\"\"All models imported successfully\"\"\\)''\")",
+      "Bash(powershell -Command \"Set-Location -Path ''C:\\\\Users\\\\student\\\\Documents\\\\vibecoding\\\\module_6\\\\backend''; .\\\\.venv\\\\Scripts\\\\python.exe -c ''from app.models import User, UserRole, Category, Task, TaskPriority; print\\(chr\\(34\\)All models imported successfullychr\\(34\\)\\)''\")",
+      "Bash(cmd /c \"cd /d C:\\\\Users\\\\student\\\\Documents\\\\vibecoding\\\\module_6\\\\backend && .venv\\\\Scripts\\\\python.exe -c \"\"from app.models import User, UserRole, Category, Task, TaskPriority; print\\(''All models imported successfully''\\)\"\"\")",
+      "Bash(cmd /c \"cd /d C:\\\\Users\\\\student\\\\Documents\\\\vibecoding\\\\module_6\\\\backend && .venv\\\\Scripts\\\\python.exe -c \"\"from app.models import User, UserRole, Category, Task, TaskPriority; print\\(''SUCCESS''\\)\"\" 2>&1\")",
+      "Bash(.venvScriptspip install python-jose[cryptography] passlib[bcrypt] pydantic[email])",
+      "Bash(.venv/Scripts/pip install:*)",
+      "Bash(.venv/Scripts/python.exe -m pip install:*)",
+      "Bash(python -m pip install:*)",
+      "Bash(.venv/Scripts/python.exe:*)",
+      "Bash(npm run build:*)",
+      "Bash(npm install)"
+    ]
+  }
+}
