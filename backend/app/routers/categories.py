@@ -11,29 +11,15 @@ from app.schemas.category import (
     CategoryResponse,
     CategoryReorder,
 )
-from app.auth import get_current_user
+from app.auth import (
+    get_current_user,
+    get_current_admin_user,
+    get_current_admin_or_member,
+    require_admin,
+    require_admin_or_member,
+)
 
 router = APIRouter(prefix="/api/categories", tags=["categories"])
-
-
-def require_admin_or_member(current_user: User) -> User:
-    """Admin 또는 Member 권한 확인"""
-    if current_user.role not in [UserRole.admin, UserRole.member]:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Admin 또는 Member 권한이 필요합니다.",
-        )
-    return current_user
-
-
-def require_admin(current_user: User) -> User:
-    """Admin 권한 확인"""
-    if current_user.role != UserRole.admin:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Admin 권한이 필요합니다.",
-        )
-    return current_user
 
 
 @router.get("/", response_model=list[CategoryResponse])
